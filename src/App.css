@@ -1,0 +1,45 @@
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color: #c5cdd5;
+  background-color: #21222b;
+  font-family: monospace;
+}
+
+p,
+button,
+input,
+::marker {
+  font-size: 16px;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+p {
+  margin-block-start: 12px !important;
+  margin-block-end: 12px !important;
+}
+
+ul {
+  margin-left: 26px;
+}
+
+ul > li > p {
+  margin-left: 10px;
+}
+
+ol {
+  margin-left: 34px;
+}
+
+ol > li > p {
+  margin-left: 2px;
+}

@@ -1,0 +1,15 @@
+.myEditor-container {
+  width: 700px;
+  margin: 100px auto auto auto;
+}
+
+.myEditor {
+  /* background-color: #0e0e0f; */
+  min-height: 750px;
+  padding: 30px;
+  border-radius: 5px;
+}
+
+.myEditor:focus {
+  outline: none;
+}
