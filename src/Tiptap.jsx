@@ -4,16 +4,18 @@ import Text from "@tiptap/extension-text";
 import { OrderedList, ListItem } from "@tiptap/extension-list";
 import { UndoRedo } from "@tiptap/extensions";
 
-import { CustomParagraph } from "./CustomParagraph";
-import { CustomBulletList } from "./CustomBulletList";
+import { MyParagraph } from "./nodes/MyParagraph";
+import { CustomBulletList, CustomListItem } from "./nodes/CustomBulletList";
 
-import { basicList, complexList } from "./initialContent";
+import { IndentedParagraph } from "./nodes/IndentedParagraph";
+import { basicList } from "./initialContent";
 
 import "./Tiptap.css";
 
 const extensions = [
   Document,
-  CustomParagraph,
+  MyParagraph,
+  IndentedParagraph,
   Text,
   OrderedList,
   CustomBulletList,
@@ -32,6 +34,8 @@ const Tiptap = () => {
       },
     },
   });
+
+  console.log("SCHEMA", editor.schema);
 
   return (
     <>

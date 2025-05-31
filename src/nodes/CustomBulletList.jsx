@@ -1,4 +1,4 @@
-import { BulletList } from "@tiptap/extension-list";
+import { BulletList, ListItem } from "@tiptap/extension-list";
 import { TextSelection } from "@tiptap/pm/state";
 import { Fragment } from "@tiptap/pm/model";
 
@@ -7,7 +7,7 @@ export const CustomBulletList = BulletList.extend({
     return {
       Backspace: ({ editor }) => {
         // return editor.commands.doSomething();
-        return editor.commands.doMoreThings();
+        // return editor.commands.doMoreThings();
       },
     };
   },
@@ -19,14 +19,10 @@ export const CustomBulletList = BulletList.extend({
           const { selection } = state;
           const { $from } = selection;
 
-          const paragraph = $from.node($from.depth);
           const listItem = $from.node($from.depth - 1);
           const list = $from.node($from.depth - 2);
-          const textContent = paragraph.textContent;
           const index = $from.index($from.depth - 2);
-
-          // FIX
-          console.log("DO MORE THINGS", { textContent, list, listItem, index });
+          const listPos = $from.before($from.depth - 2);
 
           const beforeContent = [];
           const alteredContent = [];
@@ -39,8 +35,61 @@ export const CustomBulletList = BulletList.extend({
             if (i > index) afterContent.push(element);
           }
 
-          // FIX
-          console.log({ beforeContent, afterContent });
+          const listItemToAlter = list.content.content[index];
+
+          for (let i = 0; i < listItemToAlter.content.content.length; i++) {
+            const node = listItemToAlter.content.content[i];
+
+            if (i === 0) {
+              const li = listItem.type.create(
+                listItemToAlter.attrs,
+                Fragment.from(node)
+              );
+
+              const ul = list.type.create(list.attrs, Fragment.from([li]));
+
+              alteredContent.push(ul);
+            } else {
+              alteredContent.push(node);
+            }
+          }
+
+          let caretPosition = listPos;
+          const replacement = [];
+
+          if (beforeContent.length > 0) {
+            const beforeUl = list.type.create(
+              list.attrs,
+              Fragment.from(beforeContent)
+            );
+
+            caretPosition += beforeUl.nodeSize;
+
+            replacement.push(beforeUl);
+          }
+
+          if (alteredContent.length > 0) {
+            for (let i = 0; i < alteredContent.length; i++) {
+              replacement.push(alteredContent[i]);
+            }
+          }
+
+          if (afterContent.length > 0) {
+            const afterUl = list.type.create(
+              list.attrs,
+              Fragment.from(afterContent)
+            );
+
+            replacement.push(afterUl);
+          }
+
+          tr.replaceWith(listPos, listPos + list.nodeSize, replacement);
+
+          const $caretPosition = tr.doc.resolve(caretPosition + 1);
+
+          tr.setSelection(TextSelection.near($caretPosition));
+
+          dispatch(tr);
 
           return true;
         },
@@ -60,9 +109,6 @@ export const CustomBulletList = BulletList.extend({
               list?.type.name !== "orderedList") ||
             listItem?.type.name !== "listItem"
           ) {
-            //FIX
-            console.log("Do Nothing");
-
             return false;
           }
 
@@ -74,13 +120,8 @@ export const CustomBulletList = BulletList.extend({
             listItem?.type.name == "listItem" &&
             parentOffset === 0
           ) {
-            // FIX
-            console.log("Do Something");
-
             const content = list.content.content;
             const index = $from.index($from.depth - 2);
-
-            console.log(index);
 
             const beforeContent = [];
             const afterContent = [];
@@ -145,3 +186,5 @@ export const CustomBulletList = BulletList.extend({
     };
   },
 });
+
+export const CustomListItem = ListItem.extend({ content: "block+" });
