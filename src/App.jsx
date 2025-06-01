@@ -6,9 +6,9 @@ import "./App.css";
 function App() {
   return (
     <div>
-      {/* <Tiptap /> */}
+      <Tiptap />
 
-      <Example_MyBlocks />
+      {/* <Example_MyBlocks /> */}
     </div>
   );
 }

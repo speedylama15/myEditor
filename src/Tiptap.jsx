@@ -1,27 +1,19 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
-import { OrderedList, ListItem } from "@tiptap/extension-list";
+import Paragraph from "@tiptap/extension-paragraph";
 import { UndoRedo } from "@tiptap/extensions";
 
-import { MyParagraph } from "./nodes/MyParagraph";
-import { CustomBulletList, CustomListItem } from "./nodes/CustomBulletList";
+import { Block } from "./extensions/Block";
+import { Body } from "./extensions/Body";
+import { Content } from "./extensions/Content";
+import { BlockParagraph } from "./extensions/MyParagraph";
 
-import { IndentedParagraph } from "./nodes/IndentedParagraph";
 import { basicList } from "./initialContent";
 
 import "./Tiptap.css";
 
-const extensions = [
-  Document,
-  MyParagraph,
-  IndentedParagraph,
-  Text,
-  OrderedList,
-  CustomBulletList,
-  ListItem,
-  UndoRedo,
-];
+const extensions = [Document, Paragraph, Text, UndoRedo];
 const content = basicList;
 
 const Tiptap = () => {
@@ -35,6 +27,7 @@ const Tiptap = () => {
     },
   });
 
+  // FIX
   console.log("SCHEMA", editor.schema);
 
   return (
