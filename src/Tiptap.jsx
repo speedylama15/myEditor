@@ -1,24 +1,38 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
-import Paragraph from "@tiptap/extension-paragraph";
 import { UndoRedo } from "@tiptap/extensions";
 
-import { Block } from "./extensions/Block";
-import { Body } from "./extensions/Body";
-import { Content } from "./extensions/Content";
-import { BlockParagraph } from "./extensions/MyParagraph";
-
-import { basicList } from "./initialContent";
+import { MyDoc, MyBlock, MyGroup, MyParagraph } from "./extensions/MyBlock";
 
 import "./Tiptap.css";
 
-const extensions = [Document, Paragraph, Text, UndoRedo];
-const content = basicList;
+const content = `
+  <p>Hey</p>
+
+  <div data-node-type="block">
+    <div data-node-type="paragraph">Paragraph</div>
+  </div>
+
+  <div data-node-type="block">
+    <div data-node-type="paragraph">Indent: 0</div>
+
+    <div data-node-type="group">
+      <div data-node-type="block">
+        <div data-node-type="paragraph">Indent: 1</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p>ABC</p>
+    <p>DEF</p>
+  </div>
+`;
 
 const Tiptap = () => {
   const editor = useEditor({
-    extensions,
+    extensions: [MyDoc, Text, UndoRedo, MyBlock, MyGroup, MyParagraph],
     content,
     editorProps: {
       attributes: {
