@@ -5,7 +5,7 @@ import { Fragment } from "@tiptap/pm/model";
 export const CustomBulletList = BulletList.extend({
   addKeyboardShortcuts() {
     return {
-      Backspace: ({ editor }) => {
+      Backspace: () => {
         // return editor.commands.doSomething();
         // return editor.commands.doMoreThings();
       },

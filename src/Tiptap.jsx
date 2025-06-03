@@ -1,63 +1,39 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import Text from "@tiptap/extension-text";
 import { UndoRedo } from "@tiptap/extensions";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import Strike from "@tiptap/extension-strike";
+import Highlight from "@tiptap/extension-highlight";
 
-import { JCDoc, JCBlock, JCGroup, JCParagraph } from "./extensions/Nodes";
+import { JCDoc } from "./extensions/JCDoc";
+import { JCBlock } from "./extensions/JCBlock";
+import { JCContent } from "./extensions/JCContent";
+import { JCGroup } from "./extensions/JCGroup";
+import { JCParagraph } from "./extensions/JCParagraph";
 
 import "./Tiptap.css";
 
-const content = `
-  <p>Hey</p>
-
-  <div class="jc-block" data-node-type="jc-block">
-    <div
-      class="jc-content"
-      data-node-type="jc-content"
-      data-content-type="jc-paragraph"
-    >
-      <p class="jc-inline-content">Basic Paragraph Block</p>
-    </div>
-
-    <div class="jc-group" data-node-type="jc-group" data-indent-level="1">
-      <div class="jc-block" data-node-type="jc-block">
-        <div
-          class="jc-content"
-          data-node-type="jc-content"
-          data-content-type="jc-paragraph"
-        >
-          <p class="jc-inline-content">Basic Paragraph Block 1 1</p>
-        </div>
-
-        <div class="jc-group" data-node-type="jc-group" data-indent-level="2">
-          <div class="jc-block" data-node-type="jc-block">
-            <div
-              class="jc-content"
-              data-node-type="jc-content"
-              data-content-type="jc-paragraph"
-            >
-              <p class="jc-inline-content">Basic Paragraph Block 2 1</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jc-block" data-node-type="jc-block">
-        <div
-          class="jc-content"
-          data-node-type="jc-content"
-          data-content-type="jc-paragraph"
-        >
-          <p class="jc-inline-content">Basic Paragraph Block 1 2</p>
-        </div>
-      </div>
-    </div>
-  </div>
-`;
-
 const Tiptap = () => {
   const editor = useEditor({
-    extensions: [Text, UndoRedo, JCDoc, JCBlock, JCGroup, JCParagraph],
-    content: content,
+    extensions: [
+      Text,
+      Bold,
+      Italic,
+      Subscript,
+      Superscript,
+      Strike,
+      Highlight,
+      UndoRedo,
+      JCDoc,
+      JCBlock,
+      JCContent,
+      JCGroup,
+      JCParagraph,
+    ],
+    content: "<p>Lord Jesus Christ</p>",
     editorProps: {
       attributes: {
         class: "myEditor",

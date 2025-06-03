@@ -12,6 +12,20 @@ html {
   font-family: monospace;
 }
 
+.ProseMirror {
+  white-space: pre-wrap;
+}
+
+.app-page > * {
+  margin: auto;
+  width: 700px;
+}
+
+.app-page > *:first-child {
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
 p,
 button,
 input,

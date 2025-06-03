@@ -1,14 +1,14 @@
 import Tiptap from "./Tiptap";
-import Example_MyBlocks from "./examples/Example_MyBlocks";
+import DragComponentVisual from "./components/DragComponentVisual/DragComponentVisual";
 
 import "./App.css";
 
 function App() {
   return (
-    <div>
+    <div className="app-page">
       <Tiptap />
 
-      {/* <Example_MyBlocks /> */}
+      <DragComponentVisual />
     </div>
   );
 }

@@ -1,0 +1,25 @@
+.dragComponentVisual {
+  display: flex;
+  align-items: baseline;
+}
+
+.dragComponentVisual::before {
+  content: "👊";
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.dragComponentVisual-paragraph {
+  font-weight: 700;
+}
+
+.dragComponentVisual-paragraph::before {
+  display: none;
+  content: "🖐️";
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.dragComponentVisual:hover .dragComponentVisual-paragraph::before {
+  display: inline-block;
+}
