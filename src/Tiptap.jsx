@@ -1,48 +1,69 @@
 import { useEditor, EditorContent } from "@tiptap/react";
-import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import { UndoRedo } from "@tiptap/extensions";
 
-import { MyDoc, MyBlock, MyGroup, MyParagraph } from "./extensions/MyBlock";
+import { JCDoc, JCBlock, JCGroup, JCParagraph } from "./extensions/Nodes";
 
 import "./Tiptap.css";
 
 const content = `
   <p>Hey</p>
 
-  <div data-node-type="block">
-    <div data-node-type="paragraph">Paragraph</div>
-  </div>
+  <div class="jc-block" data-node-type="jc-block">
+    <div
+      class="jc-content"
+      data-node-type="jc-content"
+      data-content-type="jc-paragraph"
+    >
+      <p class="jc-inline-content">Basic Paragraph Block</p>
+    </div>
 
-  <div data-node-type="block">
-    <div data-node-type="paragraph">Indent: 0</div>
+    <div class="jc-group" data-node-type="jc-group" data-indent-level="1">
+      <div class="jc-block" data-node-type="jc-block">
+        <div
+          class="jc-content"
+          data-node-type="jc-content"
+          data-content-type="jc-paragraph"
+        >
+          <p class="jc-inline-content">Basic Paragraph Block 1 1</p>
+        </div>
 
-    <div data-node-type="group">
-      <div data-node-type="block">
-        <div data-node-type="paragraph">Indent: 1</div>
+        <div class="jc-group" data-node-type="jc-group" data-indent-level="2">
+          <div class="jc-block" data-node-type="jc-block">
+            <div
+              class="jc-content"
+              data-node-type="jc-content"
+              data-content-type="jc-paragraph"
+            >
+              <p class="jc-inline-content">Basic Paragraph Block 2 1</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="jc-block" data-node-type="jc-block">
+        <div
+          class="jc-content"
+          data-node-type="jc-content"
+          data-content-type="jc-paragraph"
+        >
+          <p class="jc-inline-content">Basic Paragraph Block 1 2</p>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div>
-    <p>ABC</p>
-    <p>DEF</p>
   </div>
 `;
 
 const Tiptap = () => {
   const editor = useEditor({
-    extensions: [MyDoc, Text, UndoRedo, MyBlock, MyGroup, MyParagraph],
-    content,
+    extensions: [Text, UndoRedo, JCDoc, JCBlock, JCGroup, JCParagraph],
+    content: content,
     editorProps: {
       attributes: {
         class: "myEditor",
       },
     },
   });
-
-  // FIX
-  console.log("SCHEMA", editor.schema);
 
   return (
     <>
