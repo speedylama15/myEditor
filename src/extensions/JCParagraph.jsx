@@ -6,7 +6,7 @@ export const JCParagraph = Node.create({
   group: "block",
   // REVIEW: this can change to block and inlines in the future
   content: "inline*",
-  marks: "bold",
+  marks: "bold italic underline",
 
   parseHTML() {
     return [{ tag: "p" }, { tag: 'div[data-content-type="paragraph"]' }];
@@ -21,11 +21,78 @@ export const JCParagraph = Node.create({
       Enter: ({ editor }) => {
         return editor.commands.splitParagraphBlock();
       },
+      Backspace: ({ editor }) => {
+        return editor.commands.mergeWithPreviousBlock();
+      },
     };
   },
 
   addCommands() {
     return {
+      mergeWithPreviousBlock: () => (params) => {
+        const { state, tr, dispatch } = params;
+        const { selection } = state;
+        const { $from } = selection;
+        const { parentOffset } = $from;
+
+        if (parentOffset === 0) {
+          // TODO: get jcParagraph content
+          const currentParagraphNode = $from.node($from.depth);
+          const currentParagraphContent = currentParagraphNode.content;
+          // REVIEW: pos is here -> |<div></div>
+          const currentBlockNode = $from.node($from.depth - 2);
+          const currentBlockNodeBeforePos = $from.before($from.depth - 2);
+          const currentBlockNodeAfterPos =
+            currentBlockNodeBeforePos + currentBlockNode.nodeSize;
+          const resolvedPos = state.doc.resolve(currentBlockNodeBeforePos);
+
+          const { pos, nodeBefore } = resolvedPos;
+
+          const prevBlockBeforePos = pos - nodeBefore.nodeSize;
+          const prevBlockAfterPos = pos;
+
+          let replaceStartPos;
+          const replaceEndPos = pos - 3;
+          let newContent;
+
+          nodeBefore.descendants((node) => {
+            if (node.type.name === "jcParagraph") {
+              // IDEA: kinda important
+              replaceStartPos = replaceEndPos - node.content.size;
+
+              newContent = node.content.append(currentParagraphContent);
+            }
+          });
+
+          // FIX
+          console.log({
+            resolvedPos,
+            currentParagraphNode,
+            currentParagraphContent,
+            currentBlockData: {
+              currentBlockNodeAfterPos,
+              currentBlockNodeBeforePos,
+            },
+            prevBlockData: {
+              pos,
+              nodeBefore,
+              prevBlockBeforePos,
+              prevBlockAfterPos,
+            },
+            replaceData: { replaceStartPos, replaceEndPos, newContent },
+          });
+
+          tr.replaceWith(replaceStartPos, replaceEndPos, newContent);
+          tr.delete(currentBlockNodeBeforePos, currentBlockNodeAfterPos);
+          tr.setSelection(TextSelection.create(tr.doc, replaceEndPos));
+
+          dispatch(tr);
+
+          return true;
+        }
+
+        return false;
+      },
       splitParagraphBlock:
         () =>
         ({ dispatch, tr, state }) => {
@@ -60,21 +127,6 @@ export const JCParagraph = Node.create({
           const insertPos = tr.mapping.map($from.end($from.depth - 2));
 
           tr.insert(insertPos, block);
-
-          // FIX
-          console.log("Selection Info in Content_Paragraph", {
-            // selection,
-            // $from,
-            // currentDepth,
-            // currentNode,
-            // marks: $from.marks(),
-            beforeContent,
-            afterContent,
-            currentStart,
-            currentEnd,
-            insertPos,
-            block,
-          });
 
           const resolvedPos = tr.doc.resolve(insertPos + 4);
 

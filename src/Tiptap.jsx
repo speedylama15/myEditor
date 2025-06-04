@@ -6,6 +6,7 @@ import Italic from "@tiptap/extension-italic";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import Strike from "@tiptap/extension-strike";
+import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 
 import { JCDoc } from "./extensions/JCDoc";
@@ -25,6 +26,7 @@ const Tiptap = () => {
       Subscript,
       Superscript,
       Strike,
+      Underline,
       Highlight,
       UndoRedo,
       JCDoc,
@@ -33,7 +35,7 @@ const Tiptap = () => {
       JCGroup,
       JCParagraph,
     ],
-    content: "<p>Lord Jesus Christ</p>",
+    content: "<p>A<strong>B</strong>C</p>",
     editorProps: {
       attributes: {
         class: "myEditor",
