@@ -1,10 +1,14 @@
 import { Node } from "@tiptap/core";
 import { mergeAttributes } from "@tiptap/core";
 
-export const JCContent = Node.create({
-  name: "jcContent",
-  group: "jcContent",
-  content: "block+",
+const Content = Node.create({
+  name: "content",
+  group: "content",
+  content: "paragraph?",
+
+  // TODO: maybe I should add a plugin that assigns content type depending
+  // TODO: on the element that exists inside?
+  // TODO: but it's always going to be a p even if it's a list item so...not sure
 
   addAttributes() {
     return {
@@ -21,17 +25,19 @@ export const JCContent = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-node-type="jc-content"]' }];
+    return [{ tag: 'div[data-node-type="content"]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
     return [
       "div",
       mergeAttributes(HTMLAttributes, {
-        class: "jc-content",
-        "data-node-type": "jc-content",
+        class: "content",
+        "data-node-type": "content",
       }),
       0,
     ];
   },
 });
+
+export default Content;

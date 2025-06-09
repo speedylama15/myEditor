@@ -1,14 +1,15 @@
-import Tiptap from "./Tiptap";
-import DragComponentVisual from "./components/DragComponentVisual/DragComponentVisual";
+import { Editor } from "./editor";
+
+import { DragVisual } from "./components";
 
 import "./App.css";
 
 function App() {
   return (
     <div className="app-page">
-      <Tiptap />
+      <Editor />
 
-      <DragComponentVisual />
+      <DragVisual />
     </div>
   );
 }

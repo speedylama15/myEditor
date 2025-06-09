@@ -1,14 +1,14 @@
-.myEditor-container {
+.editor-container {
   width: 700px;
   margin: 100px auto auto auto;
 }
 
-.myEditor {
+.editor {
   min-height: 750px;
   padding: 30px;
   border-radius: 5px;
 }
 
-.myEditor:focus {
+.editor:focus {
   outline: none;
 }

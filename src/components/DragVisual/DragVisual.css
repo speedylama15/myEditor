@@ -1,25 +1,26 @@
-.dragComponentVisual {
+.dragVisual {
   display: flex;
   align-items: baseline;
 }
 
-.dragComponentVisual::before {
+.dragVisual::before {
   content: "👊";
   font-size: 16px;
   margin-right: 10px;
 }
 
-.dragComponentVisual-paragraph {
+.dragVisual-paragraph {
   font-weight: 700;
 }
 
-.dragComponentVisual-paragraph::before {
+.dragVisual-paragraph::before {
   opacity: 0;
   content: "🖐️";
   font-size: 16px;
   margin-right: 10px;
 }
 
-.dragComponentVisual:hover .dragComponentVisual-paragraph::before {
+.dragVisual:hover .dragVisual-paragraph::before {
+  cursor: pointer;
   opacity: 1;
 }

@@ -37,19 +37,15 @@ h1 {
   font-size: 32px;
 }
 
-div[data-node-type="jc-block"] {
+div[data-node-type="block"] {
   font-size: 16px;
   line-height: 32px;
 }
 
-div[data-indent-level="1"] {
+div[data-node-type="group"] > div[data-node-type="block"] {
   margin-left: 24px;
 }
 
-div[data-indent-level="2"] {
-  margin-left: 48px;
-}
-
-div[data-node-type="jc-paragraph"] {
+div[data-node-type="paragraph"] {
   font-size: 16px;
 }
