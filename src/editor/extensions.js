@@ -9,6 +9,7 @@ import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 
 import { Doc, Block, Content, Group, Paragraph } from "../extensions";
+import { BlockCommands } from "../commands";
 
 const extensions = [
   Text,
@@ -25,6 +26,7 @@ const extensions = [
   Content,
   Group,
   Paragraph,
+  BlockCommands,
 ];
 
 export default extensions;

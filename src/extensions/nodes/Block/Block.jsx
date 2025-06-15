@@ -10,13 +10,6 @@ const Block = Node.create({
 
   addAttributes() {
     return {
-      "data-indent-level": {
-        default: 0,
-        parseHTML: (element) => element.getAttribute("data-indent-level"),
-        renderHTML: (attributes) => ({
-          "data-indent-level": attributes["data-indent-level"],
-        }),
-      },
       "data-id": {
         default: null,
         parseHTML: (element) => element.getAttribute("data-id"),
@@ -40,6 +33,7 @@ const Block = Node.create({
       "div",
       mergeAttributes(HTMLAttributes, {
         class: "block",
+        "data-node-type": "block",
       }),
       0,
     ];

@@ -7,8 +7,10 @@
 }
 
 html {
-  color: #21222b;
-  background-color: #c5cdd5;
+  /* color: #21222b;
+  background-color: #c5cdd5; */
+  color: #c5cdd5;
+  background-color: #21222b;
   font-family: monospace;
 }
 

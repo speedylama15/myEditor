@@ -8,10 +8,11 @@ const Group = Node.create({
 
   addAttributes() {
     return {
-      "data-node-type": {
-        parseHTML: (element) => element.getAttribute("data-node-type"),
+      "data-indent-level": {
+        default: 1,
+        parseHTML: (element) => element.getAttribute("data-indent-level"),
         renderHTML: (attributes) => ({
-          "data-node-type": attributes["data-node-type"],
+          "data-indent-level": attributes["data-indent-level"],
         }),
       },
     };
@@ -26,6 +27,7 @@ const Group = Node.create({
       "div",
       mergeAttributes(HTMLAttributes, {
         class: "group",
+        "data-node-type": "group",
       }),
       0,
     ];
