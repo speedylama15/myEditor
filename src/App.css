@@ -51,3 +51,19 @@ div[data-node-type="group"] > div[data-node-type="block"] {
 div[data-node-type="paragraph"] {
   font-size: 16px;
 }
+
+div[data-indent-level="1"] {
+  margin-left: 24px;
+}
+
+div[data-indent-level="2"] {
+  margin-left: 48px;
+}
+
+div[data-indent-level="3"] {
+  margin-left: 72px;
+}
+
+div[data-indent-level="4"] {
+  margin-left: 96px;
+}

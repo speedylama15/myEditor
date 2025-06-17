@@ -22,12 +22,6 @@ const Paragraph = Node.create({
       Backspace: ({ editor }) => {
         return editor.commands.mergeBlocks();
       },
-      Tab: ({ editor }) => {
-        return editor.commands.indentBlock();
-      },
-      "'": ({ editor }) => {
-        return editor.commands.testing();
-      },
     };
   },
 });
