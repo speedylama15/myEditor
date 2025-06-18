@@ -13,17 +13,6 @@ const Paragraph = Node.create({
   renderHTML() {
     return ["p", { class: "inline-content" }, 0];
   },
-
-  addKeyboardShortcuts() {
-    return {
-      Enter: ({ editor }) => {
-        return editor.commands.splitBlock();
-      },
-      Backspace: ({ editor }) => {
-        return editor.commands.mergeBlocks();
-      },
-    };
-  },
 });
 
 export default Paragraph;

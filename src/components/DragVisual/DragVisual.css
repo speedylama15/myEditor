@@ -1,26 +1,40 @@
-.dragVisual {
+.drag-visual_container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 100px;
+}
+
+.drag-visual {
   display: flex;
   align-items: baseline;
 }
 
-.dragVisual::before {
-  content: "👊";
+div[data-content-type="paragraph"] > p::before {
+  content: "📙";
   font-size: 16px;
   margin-right: 10px;
 }
 
-.dragVisual-paragraph {
-  font-weight: 700;
+div[data-content-type="numbered-list"] > p::before {
+  content: "💯";
+  font-size: 16px;
+  margin-right: 10px;
 }
 
-.dragVisual-paragraph::before {
+div[data-content-type="bullet-list"] > p::before {
+  content: "🔫";
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.drag-visual::before {
   opacity: 0;
   content: "🖐️";
   font-size: 16px;
   margin-right: 10px;
 }
 
-.dragVisual:hover .dragVisual-paragraph::before {
-  cursor: pointer;
-  opacity: 1;
+.drag-visual:hover::before {
+  opacity: 100;
 }

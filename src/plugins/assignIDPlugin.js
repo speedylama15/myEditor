@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 
 const assignIDPlugin = new Plugin({
   key: new PluginKey("assignIDPlugin"),
+
+  // IDEA: view
   view: () => ({
     update: (view) => {
       const { state } = view;

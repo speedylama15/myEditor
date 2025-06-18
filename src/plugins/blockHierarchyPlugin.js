@@ -39,8 +39,13 @@ const blockHierarchyPlugin = new Plugin({
       return { levelMap: createBlockHierarchy(state.doc) };
     },
     // REVIEW: each time a change occurs this gets invoked
-    apply(tr, value, oldState) {
-      console.log("apply", oldState);
+    // REVIEW: even if it does nothing, you still need to return a state
+    apply(tr, value) {
+      if (tr.docChanged) {
+        return value;
+      } else {
+        return value;
+      }
     },
   },
 });

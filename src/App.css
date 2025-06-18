@@ -67,3 +67,15 @@ div[data-indent-level="3"] {
 div[data-indent-level="4"] {
   margin-left: 96px;
 }
+
+div[data-indent-level="5"] {
+  margin-left: 120px;
+}
+
+div[data-indent-level="6"] {
+  margin-left: 144px;
+}
+
+div[data-indent-level="7"] {
+  margin-left: 168px;
+}

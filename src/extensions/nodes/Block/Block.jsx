@@ -1,13 +1,10 @@
 import { Node } from "@tiptap/core";
 import { mergeAttributes } from "@tiptap/core";
 
-import { assignIDPlugin, levelMapPlugin } from "../../../plugins";
-
 const Block = Node.create({
   name: "block",
   group: "block",
   content: "content{1}",
-  selectable: true,
 
   addAttributes() {
     return {
@@ -20,10 +17,8 @@ const Block = Node.create({
       },
       "data-role": {
         default: "parent",
-        parseHTML: (element) => element.getAttribute("data-id"),
-        renderHTML: (attributes) => ({
-          "data-id": attributes["data-id"],
-        }),
+        parseHTML: (element) => element.getAttribute("data-role"),
+        renderHTML: (attributes) => ({ "data-role": attributes["data-role"] }),
       },
       "data-indent-level": {
         default: 0,
@@ -33,10 +28,6 @@ const Block = Node.create({
         }),
       },
     };
-  },
-
-  addProseMirrorPlugins() {
-    return [assignIDPlugin, levelMapPlugin];
   },
 
   parseHTML() {

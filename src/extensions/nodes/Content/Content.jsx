@@ -12,12 +12,12 @@ const Content = Node.create({
 
   addAttributes() {
     return {
-      contentType: {
+      "data-content-type": {
         default: "paragraph",
         parseHTML: (element) => element.getAttribute("data-content-type"),
         renderHTML: (attributes) => {
           return {
-            "data-content-type": attributes.contentType,
+            "data-content-type": attributes["data-content-type"],
           };
         },
       },
