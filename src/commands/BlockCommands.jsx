@@ -1,6 +1,11 @@
 import { Extension } from "@tiptap/core";
 
-import { createBlock, createContent, createParagraph } from "../utils";
+import {
+  createBlock,
+  createContent,
+  createParagraph,
+  traverseDocument,
+} from "../utils";
 import { TextSelection } from "@tiptap/pm/state";
 import { blockHierarchyPluginKey } from "../plugins/blockHierarchyPlugin";
 
@@ -197,79 +202,152 @@ const BlockCommands = Extension.create({
 
       outdentBlocks:
         () =>
-        ({ state, tr, dispatch }) => {
+        ({ state, tr, dispatch, editor }) => {
           const { selection } = state;
           const { $from, from, to } = selection;
 
-          // FIX: I need trulySelected() util method
-          // TODO: find out the index of the first selected block
-          // TODO: use state.doc.forEach() and get to that index quickly
-          // FIX: if indentLevel is 0, do nothing
+          let finalNode = null;
 
-          let before = $from.before($from.depth - 2);
-          const $pos = tr.doc.resolve(before);
-          let prevBlock = null;
-          let finalSelectedBlock = null;
-          let isProceedingBlock = false;
-          const blockIndex = $pos.index();
+          traverseDocument(editor, (node, pos, nextPos, prevNode) => {
+            const { node: cNode, isSelected: cIsSelected } = node;
+            const { isSelected: pIsSelected } = prevNode;
+            const cIndentLevel = parseInt(cNode?.attrs["data-indent-level"]);
 
-          for (let i = blockIndex; i < state.doc.children.length; i++) {
-            const node = state.doc.children[i];
-            const currentIndentLevel = parseInt(
-              node.attrs["data-indent-level"]
-            );
+            if (pIsSelected && !cIsSelected) finalNode = prevNode;
 
-            if (i !== blockIndex) before = before + node.nodeSize;
+            if (finalNode) {
+              const { node: fNode } = finalNode;
 
-            const startOfParagraphNode = before + 3;
-            const endOfParagraphNode = before + node.nodeSize - 3;
+              const fIndentLevel = parseInt(fNode?.attrs["data-indent-level"]);
 
-            const isSelected =
-              startOfParagraphNode >= from && endOfParagraphNode <= to;
+              if (fIndentLevel === 0) return true;
+            }
 
-            if (isSelected) {
-              tr.setNodeMarkup(before, null, {
-                ...node.attrs,
-                "data-indent-level": currentIndentLevel - 1,
+            if (cIndentLevel !== 0 && cIsSelected) {
+              tr.setNodeMarkup(pos, null, {
+                ...cNode.attrs,
+                "data-indent-level": cIndentLevel - 1,
               });
             }
 
-            if (!isProceedingBlock) {
-              if (prevBlock?.isSelected && !isSelected) {
-                isProceedingBlock = true;
-                finalSelectedBlock = prevBlock;
-              }
-            }
+            // console.log({
+            //   node: node.node?.textContent,
+            //   nodeIsSelected: node.isSelected,
+            //   prevNode: prevNode.node?.textContent,
+            //   prevNodeSelected: prevNode.isSelected,
+            // });
+          });
 
-            if (isProceedingBlock) {
-              if (currentIndentLevel > finalSelectedBlock?.indentLevel) {
-                tr.setNodeMarkup(before, null, {
-                  ...node.attrs,
-                  "data-indent-level": currentIndentLevel - 1,
-                });
-              } else {
-                break;
-              }
-            }
+          // if (!isProceedingBlock) {
+          //   if (prevBlock?.isSelected && !isSelected) {
+          //     isProceedingBlock = true;
+          //     finalSelectedBlock = prevBlock;
+          //   }
+          // }
 
-            prevBlock = {
-              node: node.textContent,
-              isSelected,
-              indentLevel: currentIndentLevel,
-            };
+          //         if (isProceedingBlock) {
+          // if (currentIndentLevel > finalSelectedBlock?.indentLevel) {
+          //   tr.setNodeMarkup(before, null, {
+          //     ...node.attrs,
+          //     "data-indent-level": currentIndentLevel - 1,
+          //   });
+          // } else {
+          //   break
+          // }
 
-            console.log({
-              node: node.textContent,
-              isSelected,
-              isProceedingBlock,
-              finalSelectedBlock,
-            });
-          }
+          dispatch(tr);
 
           return true;
         },
+
+      // outdentBlocks:
+      //   () =>
+      //   ({ state, tr, dispatch }) => {
+      //     const { selection } = state;
+      //     const { $from, from, to } = selection;
+
+      //     let before = $from.before($from.depth - 2);
+      //     const $pos = tr.doc.resolve(before);
+      //     let prevBlock = null;
+      //     let finalSelectedBlock = null;
+      //     let isProceedingBlock = false;
+      //     const blockIndex = $pos.index();
+
+      //     for (let i = blockIndex; i < state.doc.children.length; i++) {
+      //       const node = state.doc.children[i];
+      //       const currentIndentLevel = parseInt(
+      //         node.attrs["data-indent-level"]
+      //       );
+
+      //       before = before + node.nodeSize;
+
+      //       const startOfParagraphNode = before + 3;
+      //       const endOfParagraphNode = before + node.nodeSize - 3;
+
+      //       const isSelected =
+      //         startOfParagraphNode >= from && endOfParagraphNode <= to;
+
+      //       if (isSelected) {
+      //         // FIX: before can be inaccurate
+      //         tr.setNodeMarkup(before, null, {
+      //           ...node.attrs,
+      //           "data-indent-level": currentIndentLevel - 1,
+      //         });
+      //       }
+
+      //       if (!isProceedingBlock) {
+      //         if (prevBlock?.isSelected && !isSelected) {
+      //           isProceedingBlock = true;
+      //           finalSelectedBlock = prevBlock;
+      //         }
+      //       }
+
+      //       if (isProceedingBlock) {
+      //         if (currentIndentLevel > finalSelectedBlock?.indentLevel) {
+      //           tr.setNodeMarkup(before, null, {
+      //             ...node.attrs,
+      //             "data-indent-level": currentIndentLevel - 1,
+      //           });
+      //         } else {
+      //           break;
+      //         }
+      //       }
+
+      //       prevBlock = {
+      //         node: node.textContent,
+      //         isSelected,
+      //         indentLevel: currentIndentLevel,
+      //       };
+
+      //       console.log({
+      //         node: node.textContent,
+      //         isSelected,
+      //         isProceedingBlock,
+      //         finalSelectedBlock,
+      //       });
+      //     }
+
+      //     dispatch(tr);
+
+      //     return true;
+      //   },
     };
   },
 });
 
 export default BlockCommands;
+
+// const { state } = editor;
+// const { selection, tr } = state;
+// const { $from, from, to } = selection;
+
+// traverseDocument(editor, (node, pos, nextPos, prevNode) => {
+//   console.log({
+//     node: node.node?.textContent,
+//     nodeIsSelected: node.isSelected,
+//     prevNode: prevNode.node?.textContent,
+//     prevNodeSelected: prevNode.isSelected,
+//   });
+// });
+
+// return true;

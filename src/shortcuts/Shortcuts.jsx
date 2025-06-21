@@ -1,4 +1,5 @@
 import { Extension } from "@tiptap/core";
+import { traverseDocument } from "../utils";
 
 const canSingleBlockIndent = (tr, bB, bIndentLevel) => {
   const { nodeBefore: prevBlock } = tr.doc.resolve(bB);
