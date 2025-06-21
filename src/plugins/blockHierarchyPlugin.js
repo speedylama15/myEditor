@@ -15,6 +15,8 @@ const createBlockHierarchy = (doc) => {
       } else {
         obj[indentLevel].push({ id, before: pos });
       }
+
+      return false;
     }
   });
 
@@ -40,12 +42,10 @@ const blockHierarchyPlugin = new Plugin({
     },
     // REVIEW: each time a change occurs this gets invoked
     // REVIEW: even if it does nothing, you still need to return a state
-    apply(tr, value) {
-      if (tr.docChanged) {
-        return value;
-      } else {
-        return value;
-      }
+    apply(tr, value, oldState, newState) {
+      // FIX: I need to find a way to make this calculation only when it's necessary
+      // tr.docChanged
+      return { levelMap: createBlockHierarchy(newState.doc) };
     },
   },
 });

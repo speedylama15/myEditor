@@ -15,6 +15,7 @@ const Block = Node.create({
           "data-id": attributes["data-id"],
         }),
       },
+      // FIX: is this needed?
       "data-role": {
         default: "parent",
         parseHTML: (element) => element.getAttribute("data-role"),

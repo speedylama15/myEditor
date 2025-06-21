@@ -2,12 +2,58 @@ import { Extension } from "@tiptap/core";
 
 import { createBlock, createContent, createParagraph } from "../utils";
 import { TextSelection } from "@tiptap/pm/state";
+import { blockHierarchyPluginKey } from "../plugins/blockHierarchyPlugin";
+
+// TODO: assess the first block out of many blocks selected
+const assessFirstSelectedBlock = (tr, beforePos, node) => {
+  const { nodeBefore } = tr.doc.resolve(beforePos);
+
+  const currentIndentLevel = parseInt(node.attrs["data-indent-level"]);
+  const prevIndentLevel = parseInt(nodeBefore?.attrs["data-indent-level"]);
+  const canIndent = prevIndentLevel >= currentIndentLevel;
+  const newIndentLevel = canIndent
+    ? currentIndentLevel + 1
+    : currentIndentLevel;
+
+  return { node, canIndent, newIndentLevel };
+};
+// TODO: then comes the proceeding blocks and they have different conditions they can work with
+const assessProceedingSelectedBlock = (
+  state,
+  beforePos,
+  prevBlockData,
+  node
+) => {
+  let canIndent = false;
+
+  const { block: prevBlock, canIndent: canPrevBlockIndent } = prevBlockData;
+
+  const currentIndentLevel = parseInt(node.attrs["data-indent-level"]);
+  const prevIndentLevel = parseInt(prevBlock?.attrs["data-indent-level"]);
+
+  if (currentIndentLevel - prevIndentLevel === 1 && canPrevBlockIndent)
+    canIndent = true;
+
+  if (prevIndentLevel >= currentIndentLevel) canIndent = true;
+
+  const { levelMap: blockHierarchy } = blockHierarchyPluginKey.getState(state);
+  const blocksAtLevel = blockHierarchy[currentIndentLevel];
+  const index = blocksAtLevel.findIndex((data) => data.before === beforePos);
+  if (index > 0) canIndent = true;
+
+  const newIndentLevel = canIndent
+    ? currentIndentLevel + 1
+    : currentIndentLevel;
+
+  return { node, canIndent, newIndentLevel };
+};
 
 const BlockCommands = Extension.create({
   name: "blockCommands",
 
   addCommands() {
     return {
+      // IDEA: splitParagraphBlock
       splitParagraphBlock:
         () =>
         ({ tr, dispatch, editor }) => {
@@ -43,7 +89,60 @@ const BlockCommands = Extension.create({
           }
         },
 
-      indentBlock:
+      // TODO: indentMultipleBlocks
+      indentMultipleBlocks:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const { selection } = state;
+          const { from, to } = selection;
+
+          let prevBlockData = null;
+
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (node.type.name === "block") {
+              if (prevBlockData === null) {
+                const { canIndent, newIndentLevel } = assessFirstSelectedBlock(
+                  tr,
+                  pos,
+                  node
+                );
+
+                prevBlockData = { block: node, canIndent, newIndentLevel };
+
+                // FIX: I need to make sure that the maximum indent is 7
+                // FIX: I need to make sure that the truly selected blocks only get indented
+                tr.setNodeMarkup(pos, null, {
+                  ...node.attrs,
+                  "data-indent-level": newIndentLevel,
+                });
+              } else {
+                const { canIndent, newIndentLevel } =
+                  assessProceedingSelectedBlock(
+                    state,
+                    pos,
+                    prevBlockData,
+                    node
+                  );
+
+                prevBlockData = { block: node, canIndent, newIndentLevel };
+
+                tr.setNodeMarkup(pos, null, {
+                  ...node.attrs,
+                  "data-indent-level": newIndentLevel,
+                });
+              }
+
+              return false;
+            }
+          });
+
+          dispatch(tr);
+
+          return true;
+        },
+
+      // IDEA: indentSingleBlock
+      indentSingleBlock:
         () =>
         ({ state, tr, dispatch, editor }) => {
           const { selection } = state;
@@ -53,9 +152,6 @@ const BlockCommands = Extension.create({
           const c = $from.node($from.depth - 1);
           const bB = $from.before($from.depth - 2);
           const indentLevel = parseInt(b.attrs["data-indent-level"]);
-
-          // IDEA: max indent level is 7
-          if (indentLevel === 7) return true;
 
           const nB = createBlock(editor, c, {
             "data-indent-level": indentLevel + 1,
@@ -70,6 +166,7 @@ const BlockCommands = Extension.create({
           return true;
         },
 
+      // IDEA: outdentBlock
       outdentBlock:
         () =>
         ({ state, tr, dispatch, editor }) => {
@@ -85,6 +182,7 @@ const BlockCommands = Extension.create({
           if (indentLevel === 0) return true;
 
           const nB = createBlock(editor, c, {
+            ...b.attrs,
             "data-indent-level": indentLevel - 1,
             "data-role": indentLevel - 1 === 0 ? "parent" : "child",
           });
@@ -93,6 +191,80 @@ const BlockCommands = Extension.create({
           tr.setSelection(TextSelection.create(tr.doc, $from.pos));
 
           dispatch(tr);
+
+          return true;
+        },
+
+      outdentBlocks:
+        () =>
+        ({ state, tr, dispatch }) => {
+          const { selection } = state;
+          const { $from, from, to } = selection;
+
+          // FIX: I need trulySelected() util method
+          // TODO: find out the index of the first selected block
+          // TODO: use state.doc.forEach() and get to that index quickly
+          // FIX: if indentLevel is 0, do nothing
+
+          let before = $from.before($from.depth - 2);
+          const $pos = tr.doc.resolve(before);
+          let prevBlock = null;
+          let finalSelectedBlock = null;
+          let isProceedingBlock = false;
+          const blockIndex = $pos.index();
+
+          for (let i = blockIndex; i < state.doc.children.length; i++) {
+            const node = state.doc.children[i];
+            const currentIndentLevel = parseInt(
+              node.attrs["data-indent-level"]
+            );
+
+            if (i !== blockIndex) before = before + node.nodeSize;
+
+            const startOfParagraphNode = before + 3;
+            const endOfParagraphNode = before + node.nodeSize - 3;
+
+            const isSelected =
+              startOfParagraphNode >= from && endOfParagraphNode <= to;
+
+            if (isSelected) {
+              tr.setNodeMarkup(before, null, {
+                ...node.attrs,
+                "data-indent-level": currentIndentLevel - 1,
+              });
+            }
+
+            if (!isProceedingBlock) {
+              if (prevBlock?.isSelected && !isSelected) {
+                isProceedingBlock = true;
+                finalSelectedBlock = prevBlock;
+              }
+            }
+
+            if (isProceedingBlock) {
+              if (currentIndentLevel > finalSelectedBlock?.indentLevel) {
+                tr.setNodeMarkup(before, null, {
+                  ...node.attrs,
+                  "data-indent-level": currentIndentLevel - 1,
+                });
+              } else {
+                break;
+              }
+            }
+
+            prevBlock = {
+              node: node.textContent,
+              isSelected,
+              indentLevel: currentIndentLevel,
+            };
+
+            console.log({
+              node: node.textContent,
+              isSelected,
+              isProceedingBlock,
+              finalSelectedBlock,
+            });
+          }
 
           return true;
         },
