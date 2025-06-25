@@ -1,18 +1,4 @@
 import { Extension } from "@tiptap/core";
-import { traverseDocument } from "../utils";
-
-const canSingleBlockIndent = (tr, bB, bIndentLevel) => {
-  const { nodeBefore: prevBlock } = tr.doc.resolve(bB);
-
-  if (
-    !prevBlock ||
-    parseInt(prevBlock.attrs["data-indent-level"]) < bIndentLevel
-  ) {
-    return false;
-  }
-
-  return true;
-};
 
 const Shortcuts = Extension.create({
   name: "shortcuts",
@@ -24,16 +10,11 @@ const Shortcuts = Extension.create({
       },
       Tab: ({ editor }) => {
         const { state } = editor;
-        const { selection, tr } = state;
+        const { selection } = state;
         const { $from, $to } = selection;
 
-        const b = $from.node($from.depth - 2);
-        const bB = $from.before($from.depth - 2);
-        const bIndentLevel = parseInt(b.attrs["data-indent-level"]);
-
         if ($from.pos === $to.pos) {
-          if (canSingleBlockIndent(tr, bB, bIndentLevel))
-            return editor.commands.indentSingleBlock();
+          return editor.commands.indentSingleBlock();
         }
 
         if ($from.pos !== $to.pos) {
@@ -42,9 +23,10 @@ const Shortcuts = Extension.create({
 
         return true;
       },
+
+      // FIX: parentOffset is 0 -> does not work
       "Shift-Tab": ({ editor }) => {
-        return editor.commands.outdentBlocks();
-        // return editor.commands.outdentBlock();
+        return editor.commands.outdentBlock();
       },
     };
   },

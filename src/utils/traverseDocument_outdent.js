@@ -1,6 +1,6 @@
 import isBlockSelected from "./isBlockSelected";
 
-const traverseDocument = (editor, callback) => {
+const traverseDocument_outdent = (editor, callback) => {
   const { state } = editor;
   const { selection, tr } = state;
   const { $from, from, to } = selection;
@@ -22,11 +22,11 @@ const traverseDocument = (editor, callback) => {
     const nextPos = pos + node.nodeSize;
     const isSelected = isBlockSelected(pos, node, from, to);
 
-    callback({ node, isSelected }, pos, nextPos, prevNode, i);
+    if (callback({ node, isSelected }, pos, nextPos, prevNode, i)) break;
 
     prevNode = { node, isSelected };
     pos = pos + node.nodeSize;
   }
 };
 
-export default traverseDocument;
+export default traverseDocument_outdent;
