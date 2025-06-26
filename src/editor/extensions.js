@@ -8,7 +8,14 @@ import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 
-import { Doc, Block, Content, Paragraph, Plugins } from "../extensions";
+import {
+  Doc,
+  Block,
+  Content,
+  Paragraph,
+  BulletList,
+  Plugins,
+} from "../extensions";
 // FIX
 import Shortcuts from "../shortcuts/Shortcuts";
 import { BlockCommands } from "../commands";
@@ -26,6 +33,7 @@ const extensions = [
   Doc,
   Block,
   Content,
+  BulletList,
   Paragraph,
   Plugins,
   Shortcuts,

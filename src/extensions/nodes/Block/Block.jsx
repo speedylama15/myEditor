@@ -1,5 +1,23 @@
-import { Node } from "@tiptap/core";
-import { mergeAttributes } from "@tiptap/core";
+import { Node, InputRule, mergeAttributes } from "@tiptap/core";
+
+const bulletListInputRule = new InputRule({
+  find: /^\s*([-+*])\s$/,
+  handler: ({ state, range }) => {
+    const { tr } = state;
+    const { from } = range;
+    const $from = state.doc.resolve(from);
+
+    const cPos = $from.before($from.depth - 1);
+
+    console.log({ $from, cPos });
+
+    tr.setNodeAttribute(cPos, "data-content-type", "bulletList");
+    tr.setNodeAttribute(cPos, "class", "2");
+    tr.deleteRange(cPos + 2, cPos + 3);
+
+    return tr;
+  },
+});
 
 const Block = Node.create({
   name: "block",
@@ -15,12 +33,6 @@ const Block = Node.create({
           "data-id": attributes["data-id"],
         }),
       },
-      // FIX: is this needed?
-      "data-role": {
-        default: "parent",
-        parseHTML: (element) => element.getAttribute("data-role"),
-        renderHTML: (attributes) => ({ "data-role": attributes["data-role"] }),
-      },
       "data-indent-level": {
         default: 0,
         parseHTML: (element) => element.getAttribute("data-indent-level"),
@@ -29,6 +41,11 @@ const Block = Node.create({
         }),
       },
     };
+  },
+
+  // FIX: I also have to add in paste rules when a list gets copied and it displays content type to be paragraph instead of bulletList
+  addInputRules() {
+    return [bulletListInputRule];
   },
 
   parseHTML() {

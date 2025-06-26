@@ -1,14 +1,15 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 
-import { extensions, content, editorProps } from "..";
+import { extensions, placeholder, editorProps } from "..";
 
 import "./Editor.css";
 
 const Editor = () => {
   const editor = useEditor({
     extensions,
-    content,
+    content: placeholder,
     editorProps,
+    enablePasteRules: false,
   });
 
   return (

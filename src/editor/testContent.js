@@ -1,4 +1,4 @@
-const content = `
+const testContent = `
 <div
 data-id="23885c13-f6fe-4202-83c6-44f587f56ddf"
 data-role="parent"
@@ -98,8 +98,6 @@ data-node-type="block"
     <p class="inline-content">...</p>
 </div>
 </div>
-
-
 `;
 
-export default content;
+export default testContent;

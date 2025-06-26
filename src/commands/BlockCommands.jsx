@@ -9,11 +9,13 @@ import {
 } from "../utils";
 import { TextSelection } from "@tiptap/pm/state";
 
+// FIX: maybe I should use setNodeAttribute instead of setNodeMarkup
 const BlockCommands = Extension.create({
   name: "blockCommands",
 
   addCommands() {
     return {
+      // FIX: when I press enter, I must preverse the content's attributes
       // IDEA: splitParagraphBlock
       splitParagraphBlock:
         () =>
@@ -50,37 +52,8 @@ const BlockCommands = Extension.create({
           }
         },
 
-      indentMultipleBlocks:
-        () =>
-        ({ tr, dispatch, editor }) => {
-          let processed = false;
-
-          traverseDocument_indent(editor, (node, pos) => {
-            const {
-              node: cNode,
-              isSelected: cIsSelected,
-              canIndent: cCanIndent,
-            } = node;
-
-            if (!cIsSelected && processed) return;
-            if (cIsSelected) processed = true;
-
-            const cIndentLevel = parseInt(cNode?.attrs["data-indent-level"]);
-
-            if (cCanIndent && cIndentLevel < 7) {
-              tr.setNodeMarkup(pos, null, {
-                ...node.attrs,
-                "data-indent-level": cIndentLevel + 1,
-              });
-            }
-          });
-
-          dispatch(tr);
-
-          return true;
-        },
-
-      indentSingleBlock:
+      // IDEA: indentBlock
+      indentBlock:
         () =>
         ({ state, tr, dispatch }) => {
           const { selection } = state;
@@ -107,7 +80,72 @@ const BlockCommands = Extension.create({
           return true;
         },
 
+      // IDEA: indentBlocks
+      indentBlocks:
+        () =>
+        ({ tr, dispatch, editor }) => {
+          let processed = false;
+
+          traverseDocument_indent(editor, (node, pos) => {
+            const {
+              node: cNode,
+              isSelected: cIsSelected,
+              canIndent: cCanIndent,
+            } = node;
+
+            if (!cIsSelected && processed) return true;
+            if (cIsSelected) processed = true;
+
+            const cIndentLevel = parseInt(cNode?.attrs["data-indent-level"]);
+
+            if (cCanIndent && cIndentLevel < 7) {
+              tr.setNodeMarkup(pos, null, {
+                ...node.attrs,
+                "data-indent-level": cIndentLevel + 1,
+              });
+            }
+          });
+
+          dispatch(tr);
+
+          return true;
+        },
+
+      // IDEA: outdentBlock
       outdentBlock:
+        () =>
+        ({ tr, dispatch, editor }) => {
+          let fNode = null;
+          let iteration = 0;
+
+          traverseDocument_outdent(editor, (node, pos) => {
+            const { node: cNode } = node;
+            const cIndentLevel = parseInt(cNode?.attrs["data-indent-level"]);
+
+            if (iteration === 0) fNode = cNode;
+
+            const fIndentLevel = parseInt(fNode?.attrs["data-indent-level"]);
+
+            if (fIndentLevel === 0) return true;
+            if (fIndentLevel >= cIndentLevel && iteration > 0) return true;
+
+            if (iteration === 0 || fIndentLevel < cIndentLevel) {
+              tr.setNodeMarkup(pos, null, {
+                ...cNode.attrs,
+                "data-indent-level": cIndentLevel - 1,
+              });
+            }
+
+            iteration++;
+          });
+
+          dispatch(tr);
+
+          return true;
+        },
+
+      // IDEA: outdentBlocks
+      outdentBlocks:
         () =>
         ({ tr, dispatch, editor }) => {
           let finalNode = null;

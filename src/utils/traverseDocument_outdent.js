@@ -1,6 +1,6 @@
 import isBlockSelected from "./isBlockSelected";
 
-const traverseDocument_outdent = (editor, callback) => {
+const traverseDocument_outdent = (editor, callback, skipIndexBy = 0) => {
   const { state } = editor;
   const { selection, tr } = state;
   const { $from, from, to } = selection;
@@ -17,7 +17,7 @@ const traverseDocument_outdent = (editor, callback) => {
       : false,
   };
 
-  for (let i = startIndex; i < tr.doc.children.length; i++) {
+  for (let i = startIndex + skipIndexBy; i < tr.doc.children.length; i++) {
     const node = tr.doc.children[i];
     const nextPos = pos + node.nodeSize;
     const isSelected = isBlockSelected(pos, node, from, to);

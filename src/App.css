@@ -7,10 +7,10 @@
 }
 
 html {
-  /* color: #21222b;
-  background-color: #c5cdd5; */
-  color: #c5cdd5;
-  background-color: #21222b;
+  color: #21222b;
+  background-color: #c5cdd5;
+  /* color: #c5cdd5;
+  background-color: #21222b; */
   font-family: monospace;
 }
 
@@ -78,4 +78,43 @@ div[data-indent-level="6"] {
 
 div[data-indent-level="7"] {
   margin-left: 168px;
+}
+
+div[data-content-type="bulletList"] > p::before {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+div[data-indent-level="0"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="3"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="6"] > div[data-content-type="bulletList"] > p::before {
+  content: "•";
+  font-size: 20px;
+}
+
+div[data-indent-level="1"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="4"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="7"] > div[data-content-type="bulletList"] > p::before {
+  content: "⚬";
+  font-size: 20px;
+  top: -2px;
+}
+
+div[data-indent-level="2"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="5"] > div[data-content-type="bulletList"] > p::before,
+div[data-indent-level="8"] > div[data-content-type="bulletList"] > p::before {
+  content: "▪";
+  font-size: 16px;
+  top: -2px;
+}
+
+.block.is-empty::before,
+.block.is-editor-empty::before {
+  color: #595b5d;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  position: relative;
 }
