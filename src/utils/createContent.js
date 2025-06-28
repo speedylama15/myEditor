@@ -1,4 +1,4 @@
-const createContent = (editor, contentType, content) => {
+const createContent = (editor, contentType, content, attributes) => {
   const { schema } = editor;
 
   return schema.nodes.content.create(
@@ -6,6 +6,7 @@ const createContent = (editor, contentType, content) => {
       class: "content",
       "data-node-type": "content",
       "data-content-type": contentType,
+      ...attributes,
     },
     Array.isArray(content) ? [...content] : [content]
   );

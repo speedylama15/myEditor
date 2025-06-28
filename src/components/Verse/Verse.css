@@ -1,0 +1,24 @@
+.bible-passage {
+}
+
+.passage-reference {
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 7px;
+}
+
+.verse {
+}
+
+.verse-number {
+}
+
+.verse-text {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+.verse-text sup {
+  font-size: 12px;
+  margin-right: 5px;
+}

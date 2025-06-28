@@ -9,13 +9,11 @@ import {
 } from "../utils";
 import { TextSelection } from "@tiptap/pm/state";
 
-// FIX: maybe I should use setNodeAttribute instead of setNodeMarkup
 const BlockCommands = Extension.create({
   name: "blockCommands",
 
   addCommands() {
     return {
-      // FIX: when I press enter, I must preverse the content's attributes
       // IDEA: splitParagraphBlock
       splitParagraphBlock:
         () =>
@@ -23,6 +21,7 @@ const BlockCommands = Extension.create({
           const { $from, $to } = editor.state.selection;
 
           const b = $from.node($from.depth - 2);
+          const c = $from.node($from.depth - 1);
           const bA = $from.after($from.depth - 2);
 
           const p = $from.node($from.depth);
@@ -34,11 +33,8 @@ const BlockCommands = Extension.create({
             const bottom = p.content.cut($from.parentOffset);
 
             const nP = createParagraph(editor, bottom);
-            const nC = createContent(editor, "paragraph", nP);
-            const nB = createBlock(editor, nC, {
-              "data-indent-level": b.attrs["data-indent-level"],
-              "data-role": b.attrs["data-role"],
-            });
+            const nC = createContent(editor, "paragraph", nP, c.attrs);
+            const nB = createBlock(editor, nC, b.attrs);
 
             tr.replaceWith(pS, pE, top);
             tr.insert(tr.mapping.map(bA), nB);
@@ -179,6 +175,21 @@ const BlockCommands = Extension.create({
               });
             }
           });
+
+          dispatch(tr);
+
+          return true;
+        },
+
+      revertToParagraph:
+        () =>
+        ({ tr, dispatch, state }) => {
+          const { selection } = state;
+          const { $from } = selection;
+
+          const cPos = $from.before($from.depth - 1);
+
+          tr.setNodeAttribute(cPos, "data-content-type", "paragraph");
 
           dispatch(tr);
 

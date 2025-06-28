@@ -1,0 +1,12 @@
+.content-checklist > input {
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  margin-right: 12px;
+}
+
+.content-checklist > p {
+  display: inline;
+  margin: 0;
+  vertical-align: middle;
+}

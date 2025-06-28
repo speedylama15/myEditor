@@ -1,0 +1,24 @@
+.block-bulletList {
+}
+
+.content-bulletList {
+}
+
+.content-bulletList > p::before {
+  position: relative;
+  top: -2px;
+  font-size: 12px;
+  margin-right: 12px;
+}
+
+div[data-level="0"] > .content-bulletList > p::before {
+  content: "●";
+}
+
+div[data-level="1"] > .content-bulletList > p::before {
+  content: "○";
+}
+
+div[data-level="2"] > .content-bulletList > p::before {
+  content: "■";
+}

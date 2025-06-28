@@ -8,6 +8,8 @@ import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
 import Highlight from "@tiptap/extension-highlight";
 
+import CheckListNV from "../extensions/nodes/CheckList/CheckListNV";
+
 import {
   Doc,
   Block,
@@ -18,6 +20,8 @@ import {
 } from "../extensions";
 // FIX
 import Shortcuts from "../shortcuts/Shortcuts";
+import Checklist from "../extensions/nodes/CheckList/Checklist";
+import ChecklistItem from "../extensions/nodes/CheckList/ChecklistItem";
 import { BlockCommands } from "../commands";
 
 const extensions = [
@@ -38,6 +42,10 @@ const extensions = [
   Plugins,
   Shortcuts,
   BlockCommands,
+  // FIX
+  CheckListNV,
+  Checklist,
+  ChecklistItem,
 ];
 
 export default extensions;

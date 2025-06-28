@@ -9,8 +9,6 @@ const bulletListInputRule = new InputRule({
 
     const cPos = $from.before($from.depth - 1);
 
-    console.log({ $from, cPos });
-
     tr.setNodeAttribute(cPos, "data-content-type", "bulletList");
     tr.setNodeAttribute(cPos, "class", "2");
     tr.deleteRange(cPos + 2, cPos + 3);

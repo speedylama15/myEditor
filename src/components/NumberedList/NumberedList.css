@@ -1,0 +1,14 @@
+[data-type="numberedList"] {
+  --index: attr(data-start);
+}
+
+.block-numberedList {
+}
+
+.content-numberedList {
+}
+
+.content-numberedList > p::before {
+  content: var(--index) ".";
+  margin-right: 12px;
+}

@@ -1,0 +1,39 @@
+.block-blockquote {
+  position: relative;
+  background-color: #202531;
+  padding: 20px 20px;
+  border: 2px solid #111316;
+  border-radius: 5px;
+}
+
+.block-blockquote::before {
+  display: none;
+  position: absolute;
+  content: "👋";
+  font-size: 20px;
+  top: 0;
+  left: -30px;
+}
+
+.content-blockquote {
+  display: flex;
+  gap: 20px;
+}
+
+.content-blockquote > svg {
+  fill: #f5f5f5;
+  width: 25px;
+  height: auto;
+  align-self: flex-start;
+}
+
+.content-blockquote blockquote {
+  font-size: 16px;
+  font-style: italic;
+  line-height: 24px;
+}
+
+.content-blockquote p {
+  font-size: 12px;
+  margin-top: 10px;
+}

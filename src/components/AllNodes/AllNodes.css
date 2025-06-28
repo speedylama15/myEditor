@@ -1,0 +1,32 @@
+.allNodes-container {
+  /* background-color: #171a21; */
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 50px 0 200px 0;
+}
+
+.allNodes-block {
+}
+
+.allNodes-content {
+}
+
+div[data-type="bulletList"] > .allNodes-content > p::before {
+  content: "";
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background-image: var(--icon-dot-filled);
+  background-size: contain;
+  margin-right: 16px;
+  top: -1.5px;
+}
+
+div[data-type="numberedList"] > .allNodes-content > p::before {
+  content: counter(decimal) ".";
+  display: inline-block;
+  margin-right: 16px;
+}
